@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<title>Recriação de Imagem de Música</title>
+<style>
+    /* Estilos gerais do corpo */
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #4678bd;
+        font-family: "Montserrat", sans-serif;
+    }
+
+    /* Caixa principal do cartão de música */
+    .music-card {
+        background-color: #4f88d7;
+        width: 250px;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        color: #000;
+        text-align: left;
+        position: relative;
+    }
+
+    /* Estilo da capa do álbum */
+    .cover-image {
+        width: 45px;
+        height: 45px;
+        border-radius: 4px;
+        float: left;
+        margin-right: 10px;
+    }
+
+    /* Estilos para título, artista e letra */
+    .music-info h2 {
+        margin: 0;
+        font-size: 1em;
+        font-weight: 600;
+    }
+    
+    .music-info h3 {
+        margin: 5px 0 10px;
+        font-size: 0.90em;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .lyrics {
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 25px;
+        line-height: 1.5;
+        font-size: 1em;
+        color: #000;
+    }
+
+    /* Logo do Spotify */
+    .spotify-logo {
+        display: block;
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        width: 60px;
+    }
+
+    /* Container para os controles */
+    .controls {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .controls input, .controls select, .controls button {
+        margin: 5px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Cartão de música -->
+<div id="capture-area" style="display: flex; align-items: center; justify-content: center; padding: 10%; height: 1280px; background-color: #f5f;">
+    <div class="music-card" id="musicCard">
+        <img src="album-cover.jpg" alt="Capa do Álbum" class="cover-image" id="coverImage">
+        <div class="music-info">
+            <h2 id="songTitle">Don't Let It Pass</h2>
+            <h3 id="songArtist">Junip</h3>
+        </div>
+        <p class="lyrics" id="songLyrics">
+            What's in your hand<br>
+            You're pinned down to routines<br>
+            Elevate and leave<br>
+            The flickering screen <br>
+        </p>
+        <img src="logo-white.png" alt="Spotify Logo" class="spotify-logo" id="spotifyLogo">
+    </div>
+</div>
+
+<!-- Controles de Personalização -->
+<div class="controls">
+    <label>Cor de fundo da página: <input type="color" id="pageColor" value="#4678bd"></label><br>
+    <label>Cor do cartão: <input type="color" id="cardColor" value="#4f88d7"></label><br>
+    <label>Cor do logo: 
+        <select id="logoColor">
+            <option value="logo-white.png">Branco</option>
+            <option value="logo-black.png">Preto</option>
+        </select>
+    </label><br>
+    <label>Capa do Álbum: <input type="file" id="coverUpload"></label><br>
+    <label>Nome da música: <input type="text" id="songTitleInput" placeholder="Nome da Música"></label><br>
+    <label>Autor da música: <input type="text" id="songArtistInput" placeholder="Autor"></label><br>
+    <label>Letra da música: <textarea id="songLyricsInput" rows="4" placeholder="Letra da Música"></textarea></label><br>
+    <button onclick="captureImage()">Baixar imagem</button>
+</div>
+
+<!-- Importa a biblioteca html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    // Atualiza as cores e o conteúdo
+    document.getElementById("pageColor").addEventListener("input", function() {
+        document.getElementById("capture-area").style.backgroundColor = this.value;
+    });
+
+    document.getElementById("cardColor").addEventListener("input", function() {
+        document.getElementById("musicCard").style.backgroundColor = this.value;
+    });
+
+    document.getElementById("logoColor").addEventListener("change", function() {
+        document.getElementById("spotifyLogo").src = this.value;
+    });
+
+    document.getElementById("coverUpload").addEventListener("change", function(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById("coverImage").src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+    document.getElementById("songTitleInput").addEventListener("input", function() {
+        document.getElementById("songTitle").innerText = this.value;
+    });
+
+    document.getElementById("songArtistInput").addEventListener("input", function() {
+        document.getElementById("songArtist").innerText = this.value;
+    });
+
+    document.getElementById("songLyricsInput").addEventListener("input", function() {
+        document.getElementById("songLyrics").innerHTML = this.value.replace(/\n/g, "<br>");
+    });
+
+    // Função para capturar o cartão de música como imagem
+    function captureImage() {
+        html2canvas(document.getElementById("capture-area"), {
+          //  width: 720,
+           // height: 720
+        }).then(canvas => {
+            const link = document.createElement("a");
+            link.download = "music-card.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
